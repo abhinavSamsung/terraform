@@ -31,15 +31,34 @@ resource "aws_security_group" "transformation" {
   }
 }
 
-resource "aws_instance" "transformation" {
-  ami           = "ami-0ff8a91507f77f867"
-  instance_type = "t3.micro"
-
-  vpc_security_group_ids = [
-    aws_security_group.transformation.id
-  ]
-
+resource "aws_instance" "NewServer" {
+  ami           = var.ec2_image
+  instance_type = var.ec2_instance_type
+  count         = var.ec2_count
   tags = {
-    "Terraform" = "true"
+    Name = "Terraform-${count.index + 1}"
   }
 }
+
+resource "aws_launch_template" "NewServer" {
+  name_prefix   = "foobar"
+  image_id      = var.ec2_image
+  instance_type = var.ec2_instance_type
+}
+
+output "instance_ip_addr" {
+  value       = aws_instance.NewServer.*.private_ip
+  description = "The private IP address of the main server instance."
+}
+
+output "instance_ips" {
+  value = aws_instance.NewServer.*.public_ip
+}
+
+output "addresses" {
+  value = aws_instance.NewServer.*.public_dns
+}
+
+# output "mac" {
+#   value = aws_instance.NewServer.*.mac_address
+# }
