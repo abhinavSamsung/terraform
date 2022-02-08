@@ -4,8 +4,8 @@ provider "aws" {
 }
 resource "aws_default_vpc" "default" {}
 
-resource "aws_security_group" "transformation" {
-  name        = "transformation"
+resource "aws_security_group" "transformation_new" {
+  name        = "transformation_new"
   description = "Allow standard http and https ports inbound and everything outbound"
   
   ingress {
